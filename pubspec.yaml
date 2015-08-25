@@ -1,2 +1,4 @@
 name: duty
 
+dev_dependencies:
+  test: "^0.12.4+5"
