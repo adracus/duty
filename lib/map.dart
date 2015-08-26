@@ -9,11 +9,23 @@ import 'package:duty/tuple.dart';
 abstract class Map<K, V> implements core.Iterable<Tuple2<K, V>> {
   factory Map() = WrappedMap;
 
+  factory Map.withDefault(V defaultFn(K key)) = DefaultMap;
+
+  factory Map.fromMap(core.Map<K, V> map) {
+    final target = new Map();
+    map.forEach((K key, V value) => target[key] = value);
+    return target;
+  }
+
   Option<V> get(K key);
 
   V operator[](K key);
 
+  core.bool containsKey(K key);
+
   operator[]=(K key, V value);
+
+  core.bool sameContent(Map<K, V> other);
 
   V getOrElse(K key, orElse);
 }
@@ -34,7 +46,23 @@ class WrappedMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
 
   V getOrElse(K key, orElse) => get(key).getOrElse(orElse);
 
+  core.bool containsKey(K key) => _values.containsKey(key);
+
   core.Iterator<Tuple2<K, V>> get iterator => _values.values.iterator;
+
+  core.bool operator==(other) {
+    if (other is! WrappedMap) return false;
+    return sameContent(other);
+  }
+
+  core.bool sameContent(Map<K, V> other) {
+    return this.every((tuple) {
+      return other.get(tuple.v1) == new Some(tuple.v2);
+    });
+  }
+
+  core.String toString() =>
+      "WrappedMap(${map((tuple) => "${tuple.v1}, ${tuple.v2}").join(", ")})";
 }
 
 class DefaultMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
@@ -46,13 +74,28 @@ class DefaultMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
   DefaultMap(V defaultFn(K key))
     : _defaultFn = defaultFn;
 
-  Option<V> get(K key) => _wrapped.get(key).orElse(_defaultFn(key));
+  Option<V> get(K key) => _wrapped.get(key).orElse(() =>
+      new Some(_defaultFn(key)));
 
   V operator[](K key) => get(key).get;
 
   operator[]=(K key, V value) => _wrapped[key] = value;
 
-  V getOrElse(K key, orElse) => get(key).getOrElse(orElse);
+  V getOrElse(K key, orElse) => _wrapped.getOrElse(key, orElse);
 
   core.Iterator<Tuple2<K, V>> get iterator => _wrapped.iterator;
+
+  core.bool containsKey(K key) => _wrapped.containsKey(key);
+
+  core.bool operator==(other) {
+    if (other is! DefaultMap) return false;
+    return _wrapped == other._wrapped;
+  }
+
+  core.bool sameContent(Map<K, V> other) {
+    return this._wrapped.sameContent(other);
+  }
+
+  core.String toString() =>
+      "DefaultMap(${map((tuple) => "${tuple.v1}, ${tuple.v2}").join(", ")})";
 }
