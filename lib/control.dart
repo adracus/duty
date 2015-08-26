@@ -30,14 +30,12 @@ class When extends Conditional {
   call() => body.evaluate();
 }
 
-abstract class Result extends Monad {
-  const Result() : super();
-
+abstract class Result<E> implements Monad {
   bool get isSuccess;
   bool get isFailure;
 }
 
-class Success<E> extends Result {
+class Success<E> implements Result<E> {
   final E value;
 
   const Success(this.value);
@@ -58,7 +56,7 @@ class Success<E> extends Result {
   bool get isFailure => false;
 }
 
-class Failure extends Result {
+class Failure implements Result {
   final Exception reason;
 
   Failure(this.reason);
