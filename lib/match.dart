@@ -22,7 +22,7 @@ class PatternMatch {
   run() => call();
 }
 
-class MatchingException extends Exception {
+class MatchingException {
   final on;
   MatchingException(this.on);
 

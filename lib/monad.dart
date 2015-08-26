@@ -1,10 +1,15 @@
 library duty.monad;
 
 abstract class Monad<A> {
+  const Monad();
+
   Monad map(transform(A value));
+  Monad flatMap(transform(A value));
 }
 
 abstract class Option<A> extends Monad<A> {
+  const Option() : super();
+
   bool get isDefined;
   bool get isEmpty;
 
@@ -15,9 +20,9 @@ abstract class Option<A> extends Monad<A> {
 class Some<A> extends Option<A> {
   final A value;
 
-  Some(this.value);
+  const Some(this.value) : super();
 
-  Option<A> map(transform(A value)) => new Some(transform(value));
+  Some<A> map(transform(A value)) => new Some(transform(value));
 
   Option<A> flatMap(transform(A value)) {
     final transformed = transform(value);
@@ -35,20 +40,20 @@ class Some<A> extends Option<A> {
   String toString() => "Some($value)";
 }
 
-class None extends Option<dynamic> {
-  static None _inst = new None._internal();
+const None = Nothing.inst;
 
-  None._internal();
+class Nothing extends Option<dynamic> {
+  static const Nothing inst = const Nothing._internal();
 
-  factory None() {
-    return _inst;
-  }
+  const Nothing._internal() : super();
+
+  factory Nothing() => inst;
 
   bool get isDefined => false;
   bool get isEmpty => true;
 
-  None map(transform(dynamic value)) => this;
-  None flatMap(transform(dynamic value)) => this;
+  Nothing map(transform(dynamic value)) => this;
+  Nothing flatMap(transform(dynamic value)) => this;
 
   bool operator==(other) => identical(this, other);
 

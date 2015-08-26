@@ -1,4 +1,4 @@
-import '../lib/src/match.dart';
+import 'package:duty/match.dart';
 import 'package:test/test.dart';
 
 

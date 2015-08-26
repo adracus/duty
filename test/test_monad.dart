@@ -1,4 +1,4 @@
-import '../lib/src/monad.dart';
+import 'package:duty/monad.dart';
 import 'package:test/test.dart';
 
 main() {
@@ -28,11 +28,11 @@ main() {
       });
 
       group("None", () {
-        final n = new None();
+        final n = new Nothing();
 
         test("singleton criteria", () {
-          expect(n, equals(new None()));
-          expect(identical(n, new None()), isTrue);
+          expect(n, equals(new Nothing()));
+          expect(identical(n, new Nothing()), isTrue);
         });
 
         test("isDefined", () {
@@ -52,7 +52,7 @@ main() {
         test("flatMap", () {
           final mapped = n.flatMap((u) =>
             throw new Exception("This should not be thrown"));
-            
+
           expect(mapped, equals(n));
         });
       });
