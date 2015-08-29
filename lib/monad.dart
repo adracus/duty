@@ -46,7 +46,7 @@ class Some<A> implements Option<A> {
   String toString() => "Some($value)";
 }
 
-const None = Nothing.inst;
+const Nothing None = Nothing.inst;
 
 class Nothing implements Option<dynamic> {
   static const Nothing inst = const Nothing._internal();

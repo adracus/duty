@@ -4,12 +4,15 @@ import 'dart:core' as core;
 import 'dart:collection' show IterableMixin;
 
 import 'package:duty/monad.dart';
+import 'package:duty/match.dart';
 import 'package:duty/tuple.dart';
 
 abstract class Map<K, V> implements core.Iterable<Tuple2<K, V>> {
   factory Map() = WrappedMap;
 
   factory Map.withDefault(V defaultFn(K key)) = DefaultMap;
+
+  factory Map.empty() = Map;
 
   factory Map.fromMap(core.Map<K, V> map) {
     final target = new Map();
@@ -19,6 +22,8 @@ abstract class Map<K, V> implements core.Iterable<Tuple2<K, V>> {
 
   Option<V> get(K key);
 
+  core.Map<K, V> toMap();
+
   V operator[](K key);
 
   core.bool containsKey(K key);
@@ -26,6 +31,8 @@ abstract class Map<K, V> implements core.Iterable<Tuple2<K, V>> {
   operator[]=(K key, V value);
 
   core.bool sameContent(Map<K, V> other);
+
+  V getOrElseUpdate(K key, orElse);
 
   V getOrElse(K key, orElse);
 }
@@ -45,6 +52,20 @@ class WrappedMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
   operator[]=(K key, V value) => _values[key] = dual(key, value);
 
   V getOrElse(K key, orElse) => get(key).getOrElse(orElse);
+
+  V getOrElseUpdate(K key, orElse) {
+    return get(key).getOrElse(() {
+      final newElem = new Evaluatable(orElse).evaluate();
+      this[key] = newElem;
+      return newElem;
+    });
+  }
+
+  core.Map<K, V> toMap() {
+    var result = new Map<K, V>();
+    this.forEach((tuple) => result[tuple.v1] = tuple.v2);
+    return result;
+  }
 
   core.bool containsKey(K key) => _values.containsKey(key);
 
@@ -82,6 +103,10 @@ class DefaultMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
   operator[]=(K key, V value) => _wrapped[key] = value;
 
   V getOrElse(K key, orElse) => _wrapped.getOrElse(key, orElse);
+
+  V getOrElseUpdate(K key, orElse) => _wrapped.getOrElseUpdate(key, orElse);
+
+  core.Map<K, V> toMap() => _wrapped.toMap();
 
   core.Iterator<Tuple2<K, V>> get iterator => _wrapped.iterator;
 

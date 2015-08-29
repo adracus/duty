@@ -3,6 +3,12 @@ library duty.match;
 typedef bool Predicate(arg);
 typedef ZeroArity();
 
+const Empty = const _Empty();
+
+class _Empty {
+  const _Empty();
+}
+
 class PatternMatch {
   final Object on;
   final List<Matcher> matchers = [];
@@ -66,7 +72,12 @@ class Evaluatable {
 
   Evaluatable(this.content);
 
-  evaluate() => content is ZeroArity ? content() : content;
+  evaluate() {
+    if (Empty == content) {
+      throw new StateError("Cannot evaluate empty");
+    }
+    return content is ZeroArity ? content() : content;
+  }
 }
 
 always(condition) => true;
