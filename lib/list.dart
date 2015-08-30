@@ -6,6 +6,9 @@ import 'package:duty/monad.dart';
 import 'package:duty/match.dart';
 import 'package:duty/map.dart';
 
+/** A singly linked immutable list. Regard this implementation as rather
+ * experimental. Comes with support for flattening, deep equal and other
+ * monadic operations */
 abstract class List<E> implements Monad<E>, core.Iterable<E> {
   factory List.empty() => Nil;
 
@@ -57,7 +60,10 @@ abstract class List<E> implements Monad<E>, core.Iterable<E> {
 
   List get reversed;
 
-  Map groupBy(extract(E element));
+  /** Creates a map out of this list by generating a key of each
+   * element with the given extract function and putting each element
+   * into a list with the matching key. */
+  Map<dynamic, List> groupBy(extract(E element));
 
   core.Iterator<E> get iterator;
 

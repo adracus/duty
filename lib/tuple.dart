@@ -1,7 +1,10 @@
 library duty.n_tuple;
 
+/** Abstract class for a container of one or more values */
 abstract class Tuple {
+  /** Returns the values of this in an ordered list */
   List get values;
+  /** maps all values of this with the transform function */
   List map(transform(a));
 }
 
@@ -38,6 +41,9 @@ class Tuple3<A1, A2, A3> implements Tuple {
   List map(transform(a)) => values.map(transform);
 }
 
+/** Shorthand for creating a [Tuple1]. */
 single(a) => new Tuple1(a);
+/** Shorthand for creating a [Tuple2]. */
 dual(a, b) => new Tuple2(a, b);
+/** Shorthand for creating a [Tuple3]. */
 triple(a, b, c) => new Tuple3(a, b, c);

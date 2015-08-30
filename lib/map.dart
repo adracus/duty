@@ -7,33 +7,53 @@ import 'package:duty/monad.dart';
 import 'package:duty/match.dart';
 import 'package:duty/tuple.dart';
 
+/** Custom map implementation supporting iterable style and
+ * monad computations */
 abstract class Map<K, V> implements core.Iterable<Tuple2<K, V>> {
   factory Map() = WrappedMap;
 
+  /** Creates a new map. If there is no value for a key, the default
+   * function is called. */
   factory Map.withDefault(V defaultFn(K key)) = DefaultMap;
 
+  /** Instatiates a new empty map. Same as
+   *
+   *     new Map()
+   */
   factory Map.empty() = Map;
 
+  /** Instantiates a new map from a default dart map */
   factory Map.fromMap(core.Map<K, V> map) {
     final target = new Map();
     map.forEach((K key, V value) => target[key] = value);
     return target;
   }
 
+  /** Returns an [Option]. If there is a value for the key, it
+   * is wrapped inside a [Some]. Else, it is [None]. */
   Option<V> get(K key);
 
+  /** Returns a default dart map from this map */
   core.Map<K, V> toMap();
 
+  /** Directly accesses the underlying value. Might throw an exception
+   * if there is no key-value mapping */
   V operator[](K key);
 
+  /** Checks if the specified key-value binding is contained */
   core.bool containsKey(K key);
 
+  /** Assigns the specified value to the specified key */
   operator[]=(K key, V value);
 
+  /** Checks if the two maps have the same content */
   core.bool sameContent(Map<K, V> other);
 
+  /** Retrieves the key or evaluates orElse, inserts and returns it */
   V getOrElseUpdate(K key, orElse);
 
+  /** Gets the value associated with the key or evaluates orElse and
+   * returns it */
   V getOrElse(K key, orElse);
 }
 
