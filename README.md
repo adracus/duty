@@ -24,13 +24,15 @@ default function of the map is invoked and returns a value.
 
 A library part made for pattern matching.
 
-`Match` creates a pattern match on an `object`. For a pattern match, `Matcher`s
-can be added. These matchers
-consist of a `Condition` and an `Evaluatable` content.
-
-`Conditions` can be either constants or `Predicate`s, functions of form
+Using `match(arg, PartialFunction pf)`, a pattern match can be started.
+A partial function is a function that is defined for some input arguments
+and for some not. To easily create a partial function, call the
+`when(condition)` method. This returns a `PartialFunctionExtension`.
+A condition can be either a constant or a `Predicate`, functions of form
 `bool test(arg) =>`. They match if the function returns true or if the
 constant is equal to the argument.
+If a function is defined on an input argument, its body is invoked. The
+body is a `Then`, either a function of type `(arg) => value` or a constant.
 
 `Evaluatable`s contains a value that is either a function of form `() =>` or
 an other value. If the value is a function, `evaluate` returns its result.
@@ -87,4 +89,3 @@ then reversed and then parsed as an `int`. The same applies for `double`s.
 `min` extracts the minimum.
 
 `avg` calculates the average of a list of `num`s.
-
