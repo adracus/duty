@@ -7,6 +7,15 @@ main() {
   group("util", () {
     group("Numeric", () {
       group("times", () {
+        test("==", () {
+          expect(new Numeric(1), equals(new Numeric(1)));
+          expect(new Numeric(1), isNot(equals(new Numeric(2))));
+        });
+
+        test("n", () {
+          expect(new Numeric(1), equals(n(1)));
+        });
+
         test("ZeroArity", () {
           var sum = 0;
           n(5).times(() => sum += 1);
@@ -20,6 +29,14 @@ main() {
           expect(l[0], equals(0));
           expect(l[1], equals(1));
           expect(l[2], equals(2));
+        });
+
+        test("to", () {
+          expect(n(5).to(10), equals(new NumericRangeInclusive(5, 10)));
+        });
+
+        test("until", () {
+          expect(n(5).until(10), equals(new NumericRangeExclusive(5, 10)));
         });
       });
     });
@@ -112,6 +129,75 @@ main() {
     test("avg", () {
       expect(avg([]), equals(0));
       expect(avg([4, 3, 2, 1]), equals(2.5));
+    });
+
+    group("Range", () {
+      group("NumericRangeInclusive", () {
+        final r = new NumericRangeInclusive(0, 10, 2);
+
+        test("contains", () {
+          expect(r.contains(-1), isFalse);
+          expect(r.contains(0), isTrue);
+          expect(r.contains(10), isTrue);
+          expect(r.contains(6), isTrue);
+          expect(r.contains(5), isFalse);
+          expect(r.contains(11), isFalse);
+          expect(r.contains(12), isFalse);
+        });
+
+        test("isEmpty", () {
+          expect(r.isEmpty, isFalse);
+          expect(new NumericRangeInclusive(0, 0), isEmpty);
+          expect(new NumericRangeInclusive(0, -1), isEmpty);
+        });
+
+        test("==", () {
+          final other1 = new NumericRangeInclusive(0, 10, 2);
+          final other2 = new NumericRangeInclusive(0, 10, 1);
+          final other3 = new NumericRangeInclusive(1, 10, 2);
+          final other4 = new NumericRangeInclusive(0, 11, 2);
+          final other5 = new NumericRangeInclusive(1, 11, 2);
+
+          expect(r == other1, isTrue);
+          expect(r == other2, isFalse);
+          expect(r == other3, isFalse);
+          expect(r == other4, isFalse);
+          expect(r == other5, isFalse);
+        });
+      });
+
+      group("NumericRangeExclusive", () {
+        final r = new NumericRangeExclusive(0, 3, 2);
+
+        test("contains", () {
+          expect(r.contains(-1), isFalse);
+          expect(r.contains(0), isTrue);
+          expect(r.contains(1), isFalse);
+          expect(r.contains(2), isTrue);
+          expect(r.contains(3), isFalse);
+          expect(r.contains(4), isFalse);
+        });
+
+        test("isEmpty", () {
+          expect(r.isEmpty, isFalse);
+          expect(new NumericRangeExclusive(0, 0), isEmpty);
+          expect(new NumericRangeExclusive(0, 1, 2), isNotEmpty);
+        });
+
+        test("==", () {
+          final other1 = new NumericRangeExclusive(0, 3, 2);
+          final other2 = new NumericRangeExclusive(0, 3, 1);
+          final other3 = new NumericRangeExclusive(1, 3, 2);
+          final other4 = new NumericRangeExclusive(0, 4, 2);
+          final other5 = new NumericRangeExclusive(1, 5, 2);
+
+          expect(r == other1, isTrue);
+          expect(r == other2, isFalse);
+          expect(r == other3, isFalse);
+          expect(r == other4, isFalse);
+          expect(r == other5, isFalse);
+        });
+      });
     });
   });
 }

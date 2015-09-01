@@ -14,6 +14,9 @@ abstract class Conditional {
   /** Checks if the condition evaluates to the boolean constant true */
   bool get isTrue => condition.evaluate() == true;
 
+  /** Checks if the condition does not evaluate to the boolean constant true */
+  bool get isFalse => !isTrue;
+
   /** Invokes the appropriate body of this [Conditional] */
   call();
 }
