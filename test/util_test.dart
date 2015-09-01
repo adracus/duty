@@ -197,6 +197,13 @@ main() {
           expect(r == other4, isFalse);
           expect(r == other5, isFalse);
         });
+
+        test("infinite range", () {
+          final i = new NumericRangeExclusive(0, double.INFINITY, 2);
+
+          expect(i.contains(1), isFalse);
+          expect(i.contains(2), isTrue);
+        });
       });
     });
   });
