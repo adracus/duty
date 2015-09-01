@@ -1,6 +1,9 @@
 library duty.match;
 
+import 'package:duty/monad.dart' show None, Option, Some;
+
 typedef bool Predicate(arg);
+typedef ThenFunction(arg);
 typedef ZeroArity();
 
 /** Empty constant. Throws if put into an [Evaluatable]. */
@@ -11,39 +14,75 @@ class _Empty {
   const _Empty();
 }
 
-/** Matches an object according to specified functions or constants
- *
- * Example:
- *
- *     match(5).when((n) => n < 2).then(print("Is smaller than 2"))
-               .when((n) => n == 5).then(print("It is five!"))
-               (); // Prints "It is five!"
- */
-class PatternMatch {
-  /** The object against which is matched */
-  final Object on;
+/** Filters [on] for element that [fn] is defined on and maps them with [fn]. */
+List collect(Iterable on, PartialFunction fn) {
+  var result = [];
+  for (final elem in on) {
+    if (fn.isDefinedOn(elem)) {
+      result.add(fn(elem));
+    }
+  }
+  return result;
+}
 
-  /** The matchers that have been defined on this */
-  final List<Matcher> matchers = [];
+class Then {
+  final fn;
 
-  PatternMatch(this.on);
+  const Then(this.fn);
 
-  /** Constructs an additional matcher on this pattern match */
-  MatcherBuilder when(condition) =>
-      new MatcherBuilder(new Condition(condition), this);
+  call(arg) {
+    if (fn is ThenFunction) return fn(arg);
+    return fn;
+  }
+}
 
-  /** Adds a matcher to this pattern match */
-  void add(Matcher matcher) => matchers.add(matcher);
+typedef Option Lifted(arg);
 
-  /** Invokes this pattern match and returns the result of the first matching
-   * matcher */
-  call() {
-    return matchers.firstWhere((matcher) => matcher.matches(on),
-        orElse: () => throw new Exception("")).then();
+/** A function that is defined on some values */
+class PartialFunction {
+  final List<Matcher> _matchers;
+
+  PartialFunction(this._matchers);
+
+  /** Returns a new [PartialFunction] with the matcher added */
+  PartialFunction add(Matcher matcher) {
+    return new PartialFunction([]..addAll(_matchers)..add(matcher));
   }
 
-  /** Alias for call */
-  run() => call();
+  /** Returns a builder for a partial function that also matches on
+   * [condition] */
+  PartialFunctionExtension when(condition) =>
+      new PartialFunctionExtension(this, new Condition(condition));
+
+  /** Tests if this function can be called on [obj] */
+  bool isDefinedOn(Object obj) =>
+      _matchers.any((matcher) => matcher.matches(obj));
+
+  /** Turns this into a regular function that returns a Some if this
+   * is defined on a value and a None else. */
+  Lifted get lift => (arg) {
+    if (this.isDefinedOn(arg)) return new Some(this(arg));
+    return None;
+  };
+
+  /** Gets the first matching matcher and executes its body */
+  call(Object on) => _matchers.firstWhere((matcher) => matcher.matches(on),
+      orElse: () => throw new Exception("")).then(on);
+}
+
+/** Extension for a [PartialFunction] [origin] that will match on [condition]. */
+class PartialFunctionExtension {
+  final PartialFunction origin;
+  final Condition condition;
+
+  PartialFunctionExtension(this.origin, this.condition);
+
+  /** Body that is executedd once the condition is satisfied. */
+  PartialFunction then(then) {
+    final matcher = new CustomMatcher(condition, new Then(then));
+    if (null == origin) return new PartialFunction([matcher]);
+    return origin.add(matcher);
+  }
 }
 
 /** An exception if no possible matcher could be found for [on]. */
@@ -54,36 +93,40 @@ class MatchingException {
   String toString() => "Could not match $on";
 }
 
-class MatcherBuilder {
-  final Condition condition;
-  final PatternMatch origin;
+/** A matcher which has a condition and evaluates if it matches */
+abstract class Matcher {
+  /** Evaluates this and returns the result */
+  then(arg);
 
-  MatcherBuilder(this.condition, this.origin);
+  /** Checks if the condition matches the given argument */
+  bool matches(arg);
 
-  /** Creates a matcher which evaluates [evaluatable] if [condition] is
-   * fullfilled. */
-  PatternMatch then(evaluatable) {
-    final matcher = new Matcher(condition, new Evaluatable(evaluatable));
-    origin.add(matcher);
-
-    return origin;
-  }
+  factory Matcher(Condition condition, Then _then) =
+      CustomMatcher;
 }
 
-/** A matcher which has a condition and evaluates if it matches */
-class Matcher {
+/** Matcher that matches on arguments of a specific type */
+class TypeMatcher<E> implements Matcher {
+  final Then _then;
+
+  TypeMatcher(this._then);
+
+  bool matches(arg) => arg is E;
+
+  then(arg) => _then(arg);
+}
+
+class CustomMatcher implements Matcher {
   /** Condition of this matcher */
   final Condition condition;
   /** Evaluatable body of this matcher */
-  final Evaluatable evaluatable;
+  final Then _then;
 
-  Matcher(this.condition, this.evaluatable);
+  CustomMatcher(this.condition, this._then);
 
-  /** Checks if the condition matches the given argument */
   bool matches(arg) => condition.matches(arg);
 
-  /** Evaluates the [Evaluatable] of this and returns the result */
-  then() => evaluatable.evaluate();
+  then(arg) => _then(arg);
 }
 
 /** Condition which can be either a constant or a [Predicate] */
@@ -119,4 +162,7 @@ class Evaluatable {
 always(condition) => true;
 
 /** Shorthand for creating a new pattern match */
-PatternMatch match(Object arg) => new PatternMatch(arg);
+match(arg, PartialFunction fn) => fn(arg);
+
+PartialFunctionExtension when(condition) =>
+    new PartialFunctionExtension(null, new Condition(condition));

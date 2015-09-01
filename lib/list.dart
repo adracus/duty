@@ -27,7 +27,11 @@ abstract class List<E> implements Monad<E>, core.Iterable<E> {
 
   E get head;
 
+  Option<E> get headOption;
+
   List<E> get tail;
+
+  List<E> collect(PartialFunction pf);
 
   void forEach(void f(E value));
 
@@ -81,6 +85,8 @@ class EmptyList implements List {
 
   List get tail => throw new EmptyListAccess();
 
+  Option get headOption => None;
+
   _lastWhereInternal(Option found, core.bool test(element), orElse) {
     if (found.isDefined) return found.get;
     return new Evaluatable(orElse).evaluate();
@@ -100,6 +106,8 @@ class EmptyList implements List {
   core.bool get isNotEmpty => false;
 
   List get reversed => Nil;
+
+  List collect(PartialFunction pf) => Nil;
 
   void forEach(f(e)) => null;
 
@@ -188,6 +196,15 @@ class LinkedList<E> implements List<E> {
   void forEach(f(E e)) {
     f(head);
     tail.forEach(f);
+  }
+
+  Option<E> get headOption => new Some(head);
+
+  List collect(PartialFunction pf) {
+    if (pf.isDefinedOn(head)) {
+      return new LinkedList(pf(head), tail.collect(pf));
+    }
+    return tail.collect(pf);
   }
 
   E lastWhere(core.bool test(E element), {orElse: Empty}) =>

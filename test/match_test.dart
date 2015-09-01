@@ -7,28 +7,28 @@ main() {
     group("match", () {
       group("call", () {
         test("Successfull match", () {
-          final m = match(5)
-            .when((n) => n > 10)
+          final m = match(5,
+             when((n) => n > 10)
             .then(10)
             .when((n) => n < 10)
-            .then(0);
+            .then(0));
 
-          expect(m(), equals(0));
+          expect(m, equals(0));
         });
 
         test("Failure match", () {
-          final m = match(5)
-            .when((n) => n > 10).then(20);
+          final m = () => match(5,
+            when((n) => n > 10).then(20));
 
-          expect(() => m(), throws);
+          expect(m, throws);
         });
 
         test("Matching order", () {
-          final m = match(5)
-            .when(always).then(10)
-            .when((n) => n <= 5).then(0);
+          final m = match(5,
+            when(always).then(10)
+            .when((n) => n <= 5).then(0));
 
-          expect(m(), equals(10));
+          expect(m, equals(10));
         });
       });
     });
@@ -48,6 +48,16 @@ main() {
           expect(c.matches(5), isFalse);
           expect(c.matches(6), isTrue);
         });
+      });
+    });
+
+    group("Then", () {
+      test("call", () {
+        final t1 = new Then(10);
+        final t2 = new Then((n) => n * n);
+
+        expect(t1(10), equals(10));
+        expect(t2(10), equals(100));
       });
     });
 

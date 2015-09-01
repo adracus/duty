@@ -3,6 +3,7 @@ library test.duty.list;
 import 'package:duty/list.dart';
 import 'package:test/test.dart';
 import 'package:duty/map.dart' as duty;
+import 'package:duty/match.dart' show when;
 
 main() {
   group("List", () {
@@ -94,6 +95,14 @@ main() {
 
       test("fold", () {
         expect(l.fold(0, (a, b) => a + b), equals(6));
+      });
+
+      test("collect", () {
+        final collected = l.collect(
+          when((n) => n >= 2)
+          .then(10));
+
+        expect(collected == new LinkedList(10, new LinkedList(10)), isTrue);
       });
 
       test("reduce", () {
