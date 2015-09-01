@@ -65,6 +65,11 @@ pass it to `Try(fn)`.
 functions such as `times` which executes a given function `value` times.
 `map` on `Numeric` is a shorthand for `List.generate`.
 
+`to` and `until` invoked on a `Numeric` return a `NumericRangeInclusive`
+or a `NumericRangeExclusive`. These Ranges provide lazy iterables, as such
+it is possible to define ranges like `n(0).to(double.INFINITY)`. For a range,
+a step width can be additionally specified, defaulting to `1`.
+
 `flatten` flattens a nested list. Additionally, a `level` can be specified
 how deep the flattening is applied. For negative numbers, the flattening
 flattens all nested lists.
