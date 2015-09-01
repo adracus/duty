@@ -1,4 +1,4 @@
-# duty
+# duty [![Build Status](https://travis-ci.org/Adracus/duty.svg?branch=master)](https://travis-ci.org/Adracus/duty)
 Your code calls for your duty! Write clear, efficient code with this library.
 
 This library is divided into seven parts:
