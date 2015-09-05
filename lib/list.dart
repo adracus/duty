@@ -57,10 +57,7 @@ abstract class List<E> implements Monad<E>, core.Iterable<E> {
 
   E _singleWhereInternal(Option<E> acc, core.bool test(E element));
 
-  E _lastWhereInternal(
-    Option<E> found,
-    core.bool test(E element),
-    E orElse);
+  E _lastWhereInternal(Option<E> found, core.bool test(E element), E orElse);
 
   List get reversed;
 
@@ -164,7 +161,7 @@ class EmptyList implements List {
 
   core.bool contains(core.Object element) => false;
 
-  core.bool operator==(other) => other is EmptyList;
+  core.bool operator ==(other) => other is EmptyList;
 
   core.Iterator get iterator => new ListIterator(this);
 
@@ -232,14 +229,11 @@ class LinkedList<E> implements List<E> {
     return tail.contains(element);
   }
 
-  E _lastWhereInternal(
-    Option<E> found,
-    core.bool test(E element),
-    E orElse) {
-      if (test(head)) {
-        return tail._lastWhereInternal(new Some(head), test, orElse);
-      }
-      return tail._lastWhereInternal(found, test, orElse);
+  E _lastWhereInternal(Option<E> found, core.bool test(E element), E orElse) {
+    if (test(head)) {
+      return tail._lastWhereInternal(new Some(head), test, orElse);
+    }
+    return tail._lastWhereInternal(found, test, orElse);
   }
 
   List skipWhile(core.bool test(E element)) {
@@ -260,8 +254,8 @@ class LinkedList<E> implements List<E> {
     throw new core.StateError("More than one element");
   }
 
-  core.Set<E> toSet() => fold(new core.Set<E>(), (core.Set<E> acc, elem) =>
-      acc..add(elem));
+  core.Set<E> toSet() =>
+      fold(new core.Set<E>(), (core.Set<E> acc, elem) => acc..add(elem));
 
   List<E> take(core.int n) {
     if (n < 0) throw new core.ArgumentError("n cannot be < 0");
@@ -353,12 +347,12 @@ class LinkedList<E> implements List<E> {
 
   core.bool get isEmpty => false;
 
-  core.String join([core.String separator = ""]) =>
-      head.toString() + tail.fold("", (acc, cur) {
+  core.String join([core.String separator = ""]) => head.toString() +
+      tail.fold("", (acc, cur) {
     return acc + separator + cur.toString();
   });
 
-  core.bool operator==(other) {
+  core.bool operator ==(other) {
     if (other is! List<E>) return false;
     return this.head == other.head && this.tail == other.tail;
   }
@@ -378,7 +372,8 @@ class ExpandIterable<S, T> extends core.Iterable<T> {
 
   ExpandIterable(this._iterable, core.Iterable<T> this._f(S element));
 
-  core.Iterator<T> get iterator => new ExpandIterator<S, T>(_iterable.iterator, _f);
+  core.Iterator<T> get iterator =>
+      new ExpandIterator<S, T>(_iterable.iterator, _f);
 }
 
 class ExpandIterator<S, T> implements core.Iterator<T> {

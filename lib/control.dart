@@ -28,7 +28,7 @@ class IfElse extends Conditional {
   /** Statement that will execute if this is not true */
   final Evaluatable elseBody;
 
-  IfElse(Evaluatable condition, this.ifBody, this.elseBody): super(condition);
+  IfElse(Evaluatable condition, this.ifBody, this.elseBody) : super(condition);
 
   call() => isTrue ? ifBody.evaluate() : elseBody.evaluate();
 }
@@ -65,7 +65,7 @@ class Success<E> implements Result<E> {
     return transformed is Result ? transformed : new Success(transformed);
   }
 
-  bool operator==(other) {
+  bool operator ==(other) {
     if (other is! Success) return false;
     return other.value == this.value;
   }
@@ -85,7 +85,7 @@ class Failure implements Result {
 
   Failure flatMap(transform(arg)) => this;
 
-  bool operator==(other) {
+  bool operator ==(other) {
     if (other is! Failure) return false;
     return other.reason == this.reason;
   }
@@ -105,9 +105,7 @@ Conditional If(condition, ifBody, {orElse: Empty}) {
   }
   final elseBodyEvaluatable = new Evaluatable(orElse);
   return new IfElse(
-    conditionEvaluatable,
-    ifBodyEvaluatable,
-    elseBodyEvaluatable);
+      conditionEvaluatable, ifBodyEvaluatable, elseBodyEvaluatable);
 }
 
 /** Wraps the closure into either [Success] or [Failure], depending if
@@ -116,7 +114,7 @@ Result Try(ZeroArity fn) {
   try {
     final result = fn();
     return new Success(result);
-  } catch(e) {
+  } catch (e) {
     return new Failure(e);
   }
 }

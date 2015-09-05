@@ -29,37 +29,25 @@ main() {
       });
 
       test("prependAll", () {
-        expect(l.prependAll(new LinkedList(-1, new LinkedList(0))),
-          equals(new LinkedList(-1,
-                 new LinkedList(0,
-                 new LinkedList(1,
-                 new LinkedList(2,
-                 new LinkedList(3)))))));
+        expect(l.prependAll(new LinkedList(-1, new LinkedList(0))), equals(
+            new LinkedList(-1, new LinkedList(
+                0, new LinkedList(1, new LinkedList(2, new LinkedList(3)))))));
       });
 
       test("prepend", () {
-        expect(l.prepend(0),
-          equals(new LinkedList(0,
-                 new LinkedList(1,
-                 new LinkedList(2,
-                 new LinkedList(3))))));
+        expect(l.prepend(0), equals(new LinkedList(
+            0, new LinkedList(1, new LinkedList(2, new LinkedList(3))))));
       });
 
       test("append", () {
-        expect(l.append(4),
-          equals(new LinkedList(1,
-                 new LinkedList(2,
-                 new LinkedList(3,
-                 new LinkedList(4))))));
+        expect(l.append(4), equals(new LinkedList(
+            1, new LinkedList(2, new LinkedList(3, new LinkedList(4))))));
       });
 
       test("appendAll", () {
-        expect(l.appendAll(new LinkedList(4, new LinkedList(5))),
-          equals(new LinkedList(1,
-                 new LinkedList(2,
-                 new LinkedList(3,
-                 new LinkedList(4,
-                 new LinkedList(5)))))));
+        expect(l.appendAll(new LinkedList(4, new LinkedList(5))), equals(
+            new LinkedList(1, new LinkedList(
+                2, new LinkedList(3, new LinkedList(4, new LinkedList(5)))))));
       });
 
       test("tail", () {
@@ -98,9 +86,7 @@ main() {
       });
 
       test("collect", () {
-        final collected = l.collect(
-          when((n) => n >= 2)
-          .then(10));
+        final collected = l.collect(when((n) => n >= 2).then(10));
 
         expect(collected == new LinkedList(10, new LinkedList(10)), isTrue);
       });
@@ -127,13 +113,13 @@ main() {
       test("map", () {
         final mapped = l.map((n) => n * n);
         expect(mapped,
-          equals(new LinkedList(1, new LinkedList(4, new LinkedList(9)))));
+            equals(new LinkedList(1, new LinkedList(4, new LinkedList(9)))));
       });
 
       test("flatMap", () {
         final mapped = l.flatMap((n) => new LinkedList(n));
         expect(mapped,
-          equals(new LinkedList(1, new LinkedList(2, new LinkedList(3)))));
+            equals(new LinkedList(1, new LinkedList(2, new LinkedList(3)))));
       });
 
       test("forEach", () {

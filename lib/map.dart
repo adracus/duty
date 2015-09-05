@@ -38,13 +38,13 @@ abstract class Map<K, V> implements core.Iterable<Tuple2<K, V>> {
 
   /** Directly accesses the underlying value. Might throw an exception
    * if there is no key-value mapping */
-  V operator[](K key);
+  V operator [](K key);
 
   /** Checks if the specified key-value binding is contained */
   core.bool containsKey(K key);
 
   /** Assigns the specified value to the specified key */
-  operator[]=(K key, V value);
+  operator []=(K key, V value);
 
   /** Checks if the two maps have the same content */
   core.bool sameContent(Map<K, V> other);
@@ -67,9 +67,9 @@ class WrappedMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
     return new Some(value.v2);
   }
 
-  V operator[](K key) => _values[key].v2;
+  V operator [](K key) => _values[key].v2;
 
-  operator[]=(K key, V value) => _values[key] = dual(key, value);
+  operator []=(K key, V value) => _values[key] = dual(key, value);
 
   V getOrElse(K key, orElse) => get(key).getOrElse(orElse);
 
@@ -91,7 +91,7 @@ class WrappedMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
 
   core.Iterator<Tuple2<K, V>> get iterator => _values.values.iterator;
 
-  core.bool operator==(other) {
+  core.bool operator ==(other) {
     if (other is! WrappedMap) return false;
     return sameContent(other);
   }
@@ -107,20 +107,18 @@ class WrappedMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
 }
 
 class DefaultMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
-  implements Map<K, V> {
-
+    implements Map<K, V> {
   final Map<K, V> _wrapped = new Map<K, V>();
   final _defaultFn;
 
-  DefaultMap(V defaultFn(K key))
-    : _defaultFn = defaultFn;
+  DefaultMap(V defaultFn(K key)) : _defaultFn = defaultFn;
 
-  Option<V> get(K key) => _wrapped.get(key).orElse(() =>
-      new Some(_defaultFn(key)));
+  Option<V> get(K key) =>
+      _wrapped.get(key).orElse(() => new Some(_defaultFn(key)));
 
-  V operator[](K key) => get(key).get;
+  V operator [](K key) => get(key).get;
 
-  operator[]=(K key, V value) => _wrapped[key] = value;
+  operator []=(K key, V value) => _wrapped[key] = value;
 
   V getOrElse(K key, orElse) => _wrapped.getOrElse(key, orElse);
 
@@ -132,7 +130,7 @@ class DefaultMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
 
   core.bool containsKey(K key) => _wrapped.containsKey(key);
 
-  core.bool operator==(other) {
+  core.bool operator ==(other) {
     if (other is! DefaultMap) return false;
     return _wrapped == other._wrapped;
   }

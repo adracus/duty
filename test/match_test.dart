@@ -1,32 +1,25 @@
 import 'package:duty/match.dart';
 import 'package:test/test.dart';
 
-
 main() {
   group("Match", () {
     group("match", () {
       group("call", () {
         test("Successfull match", () {
-          final m = match(5,
-             when((n) => n > 10)
-            .then(10)
-            .when((n) => n < 10)
-            .then(0));
+          final m = match(
+              5, when((n) => n > 10).then(10).when((n) => n < 10).then(0));
 
           expect(m, equals(0));
         });
 
         test("Failure match", () {
-          final m = () => match(5,
-            when((n) => n > 10).then(20));
+          final m = () => match(5, when((n) => n > 10).then(20));
 
           expect(m, throws);
         });
 
         test("Matching order", () {
-          final m = match(5,
-            when(always).then(10)
-            .when((n) => n <= 5).then(0));
+          final m = match(5, when(always).then(10).when((n) => n <= 5).then(0));
 
           expect(m, equals(10));
         });

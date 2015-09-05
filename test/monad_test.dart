@@ -44,14 +44,14 @@ main() {
         });
 
         test("map", () {
-          final mapped = n.map((u) =>
-              throw new Exception("This should not be thrown"));
+          final mapped =
+              n.map((u) => throw new Exception("This should not be thrown"));
           expect(mapped, equals(n));
         });
 
         test("flatMap", () {
-          final mapped = n.flatMap((u) =>
-            throw new Exception("This should not be thrown"));
+          final mapped = n
+              .flatMap((u) => throw new Exception("This should not be thrown"));
 
           expect(mapped, equals(n));
         });

@@ -87,7 +87,7 @@ class Nothing implements Option<dynamic> {
   Nothing map(transform(dynamic value)) => this;
   Nothing flatMap(transform(dynamic value)) => this;
 
-  bool operator==(other) => identical(this, other);
+  bool operator ==(other) => identical(this, other);
 
   String toString() => "None";
 }

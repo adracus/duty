@@ -39,7 +39,8 @@ main() {
       });
 
       test("flatMap", () {
-        final mapped = s.flatMap((v) => new Failure(new Exception("Some reason")));
+        final mapped =
+            s.flatMap((v) => new Failure(new Exception("Some reason")));
         expect(mapped is Failure, isTrue);
       });
     });

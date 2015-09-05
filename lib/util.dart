@@ -35,7 +35,7 @@ class Numeric {
   /** Shorthand for [List].generate. */
   List map(f(int i)) => new List.generate(value, f);
 
-  bool operator==(other) => other is Numeric ? value == other.value : false;
+  bool operator ==(other) => other is Numeric ? value == other.value : false;
 }
 
 /** Flattens the given list and nested lists.
@@ -43,7 +43,7 @@ class Numeric {
  * By default this does a deep flattening meaning that all nested lists
  * will be added to a single result list. [level] can also be adjusted
  * to specify the depth of flattening. */
-List flatten(List l, [int level = - 1]) {
+List flatten(List l, [int level = -1]) {
   if (0 == level) return l;
   return l.fold([], (List acc, cur) {
     if (cur is List) return acc..addAll(flatten(cur, level - 1));
@@ -83,8 +83,8 @@ reverse(reversable) {
   if (reversable is String) return reverseString(reversable);
   if (reversable is int) return int.parse(reverseString(reversable.toString()));
   if (reversable is Iterable) return reversable.toList().reversed;
-  if (reversable is double)
-    return double.parse(reverseString(reversable.toString()));
+  if (reversable is double) return double
+      .parse(reverseString(reversable.toString()));
   throw new Exception("Cannot reverse $reversable");
 }
 
@@ -94,8 +94,8 @@ min(Iterable it) {
 
   var minimum;
   for (var elem in it) {
-    if (null == minimum || Comparable.compare(minimum, elem) > 0)
-      minimum = elem;
+    if (null == minimum || Comparable.compare(minimum, elem) > 0) minimum =
+        elem;
   }
 
   return minimum;
@@ -107,8 +107,8 @@ max(Iterable it) {
 
   var maximum;
   for (var elem in it) {
-    if (null == maximum || Comparable.compare(maximum, elem) < 0)
-      maximum = elem;
+    if (null == maximum || Comparable.compare(maximum, elem) < 0) maximum =
+        elem;
   }
 
   return maximum;
@@ -153,7 +153,8 @@ abstract class NumericRange implements Range<num> {
 }
 
 /** Base class for exclusive and inclusive numeric ranges. */
-abstract class NumericRangeBase extends IterableBase<num> implements NumericRange {
+abstract class NumericRangeBase extends IterableBase<num>
+    implements NumericRange {
   final num start;
   final num end;
   final num step;
@@ -161,7 +162,7 @@ abstract class NumericRangeBase extends IterableBase<num> implements NumericRang
   num get difference => (start - end).abs();
 
   NumericRangeBase(this.start, this.end, num step)
-    : step = step == 0 ? throw new ArgumentError("step cannot be 0"): step;
+      : step = step == 0 ? throw new ArgumentError("step cannot be 0") : step;
 
   bool get isEmpty => (end - start) / step <= 0;
 
@@ -173,7 +174,7 @@ abstract class NumericRangeBase extends IterableBase<num> implements NumericRang
 /** Range from [start] to [end], exclusive. */
 class NumericRangeInclusive extends NumericRangeBase {
   NumericRangeInclusive(num start, num end, [num step = 1])
-    : super(start, end, step);
+      : super(start, end, step);
 
   NumericRangeIterator get iterator => new NumericRangeIterator(this);
 
@@ -188,7 +189,7 @@ class NumericRangeInclusive extends NumericRangeBase {
     return val <= end;
   }
 
-  bool operator==(other) {
+  bool operator ==(other) {
     if (other is! NumericRangeInclusive) return false;
     return _sameParameters(other);
   }
@@ -199,7 +200,7 @@ class NumericRangeInclusive extends NumericRangeBase {
 /** Range from [start] to [end], exclusive. */
 class NumericRangeExclusive extends NumericRangeBase {
   NumericRangeExclusive(num start, num end, [num step = 1])
-    : super(start, end, step);
+      : super(start, end, step);
 
   NumericRangeIterator get iterator => new NumericRangeIterator(this);
 
@@ -214,7 +215,7 @@ class NumericRangeExclusive extends NumericRangeBase {
     return val < end;
   }
 
-  bool operator==(other) =>
+  bool operator ==(other) =>
       other is NumericRangeExclusive ? _sameParameters(other) : false;
 
   String toString() => "Range.exclusive($start, $end, step = $step)";
@@ -226,8 +227,8 @@ class NumericRangeIterator extends Iterator<num> {
   num _current;
 
   NumericRangeIterator(NumericRange on)
-    : on = on,
-      _current = on.start;
+      : on = on,
+        _current = on.start;
 
   num get current => _current;
 

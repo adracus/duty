@@ -46,7 +46,9 @@ class PartialFunction {
 
   /** Returns a new [PartialFunction] with the matcher added */
   PartialFunction add(Matcher matcher) {
-    return new PartialFunction([]..addAll(_matchers)..add(matcher));
+    return new PartialFunction([]
+      ..addAll(_matchers)
+      ..add(matcher));
   }
 
   /** Returns a builder for a partial function that also matches on
@@ -66,8 +68,10 @@ class PartialFunction {
   };
 
   /** Gets the first matching matcher and executes its body */
-  call(Object on) => _matchers.firstWhere((matcher) => matcher.matches(on),
-      orElse: () => throw new Exception("")).then(on);
+  call(Object on) => _matchers
+      .firstWhere((matcher) => matcher.matches(on),
+          orElse: () => throw new Exception(""))
+      .then(on);
 }
 
 /** Extension for a [PartialFunction] [origin] that will match on [condition]. */
@@ -101,8 +105,7 @@ abstract class Matcher {
   /** Checks if the condition matches the given argument */
   bool matches(arg);
 
-  factory Matcher(Condition condition, Then _then) =
-      CustomMatcher;
+  factory Matcher(Condition condition, Then _then) = CustomMatcher;
 }
 
 /** Matcher that matches on arguments of a specific type */
