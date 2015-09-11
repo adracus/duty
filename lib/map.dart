@@ -81,7 +81,7 @@ class WrappedMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
 
   V operator [](K key) => _values[key].v2;
 
-  operator []=(K key, V value) => _values[key] = dual(key, value);
+  operator []=(K key, V value) => _values[key] = tuple.two(key, value);
 
   V getOrElse(K key, orElse) => get(key).getOrElse(orElse);
 
