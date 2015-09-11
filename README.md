@@ -1,7 +1,7 @@
 # duty [![Build Status](https://travis-ci.org/Adracus/duty.svg?branch=master)](https://travis-ci.org/Adracus/duty)
 Your code calls for your duty! Write clear, efficient code with this library.
 
-This library is divided into seven parts:
+This library is divided into eight parts:
 
 ## `monad.dart`
 
@@ -89,3 +89,29 @@ then reversed and then parsed as an `int`. The same applies for `double`s.
 `min` extracts the minimum.
 
 `avg` calculates the average of a list of `num`s.
+
+## `reflect.dart`
+
+This part of the library is quite experimental. It provides support when using
+reflection:
+
+`invoke` takes an object, a method name and parameters. It then generically invokes
+the specified method on the object and returns the result.
+
+`supersOf` returns all superclasses of the given type.
+
+`declarationsOf` returns all declarations of the given type. If `recursive` is
+specified as true, declarations of parent classes are also added.
+
+`currentLibrary` returns the `LibraryMirror` of the currently running script.
+
+`importsOf` returns all imports of the given library. It can also be specified
+to recursively collect imports of imported libraries.
+
+`classesOf` takes a `LibraryMirror` and returns all classes contained in that
+library. It can also be specified to recursively collect all classes from all
+linked libraries.
+
+`str` is an improved `toString` method: For `Symbol`s, it returns the string
+value of the symbol, for `Type`s, it returns the simple name of the type. For
+all other arguments, it invokes and returns the result of `toString`.
