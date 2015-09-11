@@ -52,7 +52,6 @@ main() {
             .toSet();
 
         expect(fields, equals(new Set.from([
-          "_hashCodeRnd",
           "==",
           "hashCode",
           "toString",
