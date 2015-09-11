@@ -49,12 +49,24 @@ abstract class Map<K, V> implements core.Iterable<Tuple2<K, V>> {
   /** Checks if the two maps have the same content */
   core.bool sameContent(Map<K, V> other);
 
+  /** Maps the keys of this map with a mapping function. Returns a new map. */
+  Map<dynamic, V> mapKeys(f(K key));
+
+  /** Maps the values of this map with a mapping function. Returns a new map. */
+  Map<K, dynamic> mapValues(f(V value));
+
+  /** Inserts the tuple into this map. */
+  void put(Tuple2<K, V> tuple);
+
   /** Retrieves the key or evaluates orElse, inserts and returns it */
   V getOrElseUpdate(K key, orElse);
 
   /** Gets the value associated with the key or evaluates orElse and
    * returns it */
   V getOrElse(K key, orElse);
+
+  /** Returns this map with the specified default function. */
+  Map<K, V> defaulting(V defaultFn(K key));
 }
 
 class WrappedMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
@@ -81,6 +93,28 @@ class WrappedMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
     });
   }
 
+  Map<dynamic, V> mapKeys(f(K key)) {
+    var result = new WrappedMap<dynamic, V>();
+    forEach((Tuple2<K, V> tuple) {
+      var mappedKey = f(tuple.v1);
+      result[mappedKey] = tuple.v2;
+    });
+    return result;
+  }
+
+  Map<dynamic, V> mapValues(f(V value)) {
+    var result = new WrappedMap<dynamic, V>();
+    forEach((Tuple2<K, V> tuple) {
+      var mappedValue = f(tuple.v2);
+      result[tuple.v1] = mappedValue;
+    });
+    return result;
+  }
+
+  void put(Tuple2<K, V> tuple) {
+    _values[tuple.v1] = tuple;
+  }
+
   core.Map<K, V> toMap() {
     var result = new Map<K, V>();
     this.forEach((tuple) => result[tuple.v1] = tuple.v2);
@@ -102,16 +136,21 @@ class WrappedMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
     });
   }
 
+  Map<K, V> defaulting(V defaultFn(K key)) =>
+      new DefaultMap(defaultFn, map: this);
+
   core.String toString() =>
       "WrappedMap(${map((tuple) => "${tuple.v1}, ${tuple.v2}").join(", ")})";
 }
 
 class DefaultMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
     implements Map<K, V> {
-  final Map<K, V> _wrapped = new Map<K, V>();
+  final Map<K, V> _wrapped;
   final _defaultFn;
 
-  DefaultMap(V defaultFn(K key)) : _defaultFn = defaultFn;
+  DefaultMap(V defaultFn(K key), {Map<K, V> map})
+      : _defaultFn = defaultFn,
+        _wrapped = null == map ? new WrappedMap<K, V>() : map;
 
   Option<V> get(K key) =>
       _wrapped.get(key).orElse(() => new Some(_defaultFn(key)));
@@ -129,6 +168,15 @@ class DefaultMap<K, V> extends core.Object with IterableMixin<Tuple2<K, V>>
   core.Iterator<Tuple2<K, V>> get iterator => _wrapped.iterator;
 
   core.bool containsKey(K key) => _wrapped.containsKey(key);
+
+  Map<dynamic, V> mapKeys(f(K key)) => _wrapped.mapKeys(f);
+
+  Map<K, dynamic> mapValues(f(V value)) => _wrapped.mapValues(f);
+
+  void put(Tuple2<K, V> tuple) => _wrapped.put(tuple);
+
+  Map<K, V> defaulting(V defaultFn(K key)) =>
+      new DefaultMap(defaultFn, map: this);
 
   core.bool operator ==(other) {
     if (other is! DefaultMap) return false;
